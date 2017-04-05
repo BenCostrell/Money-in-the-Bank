@@ -12,10 +12,14 @@ public class Player : MonoBehaviour {
     public float coinPositionOffset;
     private int banksOnHand;
     public int totalBanks;
+    private Transform hammerPivot;
+    private Collider2D hammerCollider;
 
 	void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        hammerPivot = transform.GetChild(0);
+        hammerCollider = hammerPivot.GetChild(0).gameObject.GetComponent<Collider2D>();
     }
 
     // Use this for initialization
