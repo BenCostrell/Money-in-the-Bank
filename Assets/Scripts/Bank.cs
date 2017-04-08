@@ -35,13 +35,14 @@ public class Bank : MonoBehaviour {
 
     public void GetSmashed()
     {
-        owner.GetBankBack();
+        owner.GetBankBack(this);
         float angle;
         if (coinsStored > 0) {
             for (int i = 0; i < coinsStored; i++)
             {
                 angle = (360f * i) / coinsStored;
-                Vector2 location = coinScatterDistance * new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+                Vector2 pos = transform.position;
+                Vector2 location = pos + (coinScatterDistance * new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)));
                 Services.CoinManager.CreateCoin(location);
             }
         }

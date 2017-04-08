@@ -73,7 +73,7 @@ MonoBehaviour:
   - {r: 1, g: 0.102941155, b: 0.90101415, a: 1}
   - {r: 0, g: 1, b: 0.91724133, a: 1}
   growthScale: 1.1
-  coinScatterDistance: 1
+  coinScatterDistance: 3
 --- !u!212 &212649204562527278
 SpriteRenderer:
   m_ObjectHideFlags: 1

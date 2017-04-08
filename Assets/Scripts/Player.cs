@@ -8,34 +8,47 @@ public class Player : MonoBehaviour {
     public float accel;
     public float maxSpeed;
     private Rigidbody2D rb;
+    private SpriteRenderer sr;
     private Coin coinInHand;
     public float coinPositionOffset;
-    private int banksOnHand;
     public int totalBanks;
-    private Transform hammerPivot;
-    private Collider2D hammerCollider;
+    public List<Bank> activeBanks;
+    public Transform hammerPivot;
+    public Collider2D hammerCollider;
+    public bool actionable;
+    public float hammerSwingTime;
+    public float hammerRecoveryTime;
+    public float hammerActiveFrameStart;
 
 	void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         hammerPivot = transform.GetChild(0);
         hammerCollider = hammerPivot.GetChild(0).gameObject.GetComponent<Collider2D>();
+        sr = GetComponent<SpriteRenderer>();
     }
 
     // Use this for initialization
 	void Start () {
-        banksOnHand = totalBanks;
+        actionable = true;
+        activeBanks = new List<Bank>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        Move();
-
-        if (Input.GetButtonDown("CreateBank_P" + playerNum))
+        if (actionable)
         {
-            if (banksOnHand > 0)
+            Move();
+            if (Input.GetButtonDown("CreateBank_P" + playerNum))
             {
-                CreateBank();
+                if (activeBanks.Count < totalBanks)
+                {
+                    CreateBank();
+                }
+            }
+            if (Input.GetButtonDown("SwingHammer_P" + playerNum))
+            {
+                SwingHammer();
             }
         }
 	}
@@ -46,6 +59,14 @@ public class Player : MonoBehaviour {
         if (inputVector.magnitude > 0.1f)
         {
             rb.AddForce(accel * inputVector);
+            if (inputVector.x > 0)
+            {
+                transform.localScale = Vector3.one;
+            }
+            else
+            {
+                transform.localScale = new Vector3(-1, 1, 1);
+            }
         }
         if (rb.velocity.magnitude > maxSpeed)
         {
@@ -87,7 +108,7 @@ public class Player : MonoBehaviour {
     {
         coinInHand = coin;
         coin.transform.parent = transform;
-        coin.transform.localPosition = coinPositionOffset * Vector2.right;
+        coin.transform.localPosition = coinPositionOffset * Vector2.down;
         coin.owner = this;
     }
 
@@ -106,19 +127,26 @@ public class Player : MonoBehaviour {
 
     void CreateBank()
     {
-        banksOnHand -= 1;
         GameObject bankObj = Instantiate(Services.PrefabDB.Bank, transform.position, Quaternion.identity);
         Bank bank = bankObj.GetComponent<Bank>();
         bank.Init(this);
+        activeBanks.Add(bank);
     }
 
-    void Smash()
+    void SwingHammer()
     {
         rb.velocity = Vector2.zero;
+        SwingHammer swingHammer = new SwingHammer(hammerSwingTime, hammerRecoveryTime, hammerActiveFrameStart, this);
+        Services.TaskManager.AddTask(swingHammer);
     }
 
-    public void GetBankBack()
+    public void GetBankBack(Bank bank)
     {
-        banksOnHand += 1;
+        activeBanks.Remove(bank);
+    }
+
+    public void GetKnockedBack(Vector2 kbVector)
+    {
+        rb.velocity = kbVector;
     }
 }

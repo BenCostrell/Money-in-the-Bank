@@ -4,6 +4,8 @@ using UnityEngine;
 
 public abstract class Event {}
 
+public class GameOver : Event { }
+
 public class EventManager {
 
 	public delegate void EventDelegate<T>(T e) where T: Event;
