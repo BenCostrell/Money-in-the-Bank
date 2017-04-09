@@ -9,10 +9,11 @@ public class Bank : MonoBehaviour {
     public Color[] colors;
     public float growthScale;
     public float coinScatterDistance;
+    private TextMesh coinCountText;
 
 	// Use this for initialization
 	void Start () {
-		
+        coinCountText = GetComponentInChildren<TextMesh>();
 	}
 	
 	// Update is called once per frame
@@ -30,22 +31,52 @@ public class Bank : MonoBehaviour {
     public void DepositCoin()
     {
         coinsStored += 1;
-        transform.localScale *= growthScale;
+        UpdateVisuals();
+    }
+
+    void UpdateVisuals()
+    {
+        coinCountText.text = coinsStored.ToString();
+        transform.localScale = 2 * Mathf.Pow(1.1f, coinsStored) * Vector3.one;
     }
 
     public void GetSmashed()
     {
-        owner.GetBankBack(this);
+        if (coinsStored <= 2)
+        {
+            DestroyThis();
+        }
+        else {
+            int coinsToSpill = Mathf.CeilToInt(coinsStored / 2f);
+            SpillCoins(coinsToSpill);
+        }
+    }
+
+    void SpillCoins (int numCoins)
+    {
         float angle;
-        if (coinsStored > 0) {
-            for (int i = 0; i < coinsStored; i++)
+        if (numCoins > 0)
+        {
+            for (int i = 0; i < numCoins; i++)
             {
-                angle = (360f * i) / coinsStored;
+                angle = Random.Range(0, 360);
                 Vector2 pos = transform.position;
                 Vector2 location = pos + (coinScatterDistance * new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)));
                 Services.CoinManager.CreateCoin(location);
             }
         }
+        owner.score -= numCoins;
+        coinsStored -= numCoins;
+        UpdateVisuals();
+        
+    }
+
+    void DestroyThis()
+    {
+        SpillCoins(coinsStored);
+        owner.GetBankBack(this);
         Destroy(gameObject);
     }
+
+
 }

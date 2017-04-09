@@ -19,6 +19,7 @@ public class Player : MonoBehaviour {
     public float hammerSwingTime;
     public float hammerRecoveryTime;
     public float hammerActiveFrameStart;
+    public int score;
 
 	void Awake()
     {
@@ -32,6 +33,7 @@ public class Player : MonoBehaviour {
 	void Start () {
         actionable = true;
         activeBanks = new List<Bank>();
+        score = 0;
 	}
 	
 	// Update is called once per frame
@@ -123,6 +125,7 @@ public class Player : MonoBehaviour {
         Services.CoinManager.DestroyCoin(coinInHand);
         coinInHand = null;
         bank.DepositCoin();
+        score += 1;
     }
 
     void CreateBank()

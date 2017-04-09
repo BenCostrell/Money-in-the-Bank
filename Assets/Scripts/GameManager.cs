@@ -11,7 +11,9 @@ public class GameManager : MonoBehaviour {
     public Color[] playerColors;
     public GameObject timer;
     public GameObject winText;
+    public GameObject[] scoreObjects;
     private Text timerText;
+    private Text[] scoreText;
     public float timeLimit;
     private float timeRemaining;
     private bool gameOver;
@@ -20,6 +22,9 @@ public class GameManager : MonoBehaviour {
     {
         InitializeServices();
         timerText = timer.GetComponent<Text>();
+        scoreText = new Text[2];
+        scoreText[0] = scoreObjects[0].GetComponent<Text>();
+        scoreText[1] = scoreObjects[1].GetComponent<Text>();
     }
     
     // Use this for initialization
@@ -40,6 +45,7 @@ public class GameManager : MonoBehaviour {
         if (!gameOver)
         {
             UpdateTimer();
+            UpdateScore();
         }
 	}
 
@@ -86,19 +92,26 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    void UpdateScore()
+    {
+        for (int i = 0; i < 2; i++)
+        {
+            scoreText[i].text = players[i].score.ToString();
+        }
+    }
+
     void EndGame()
     {
         gameOver = true;
         Services.EventManager.Fire(new GameOver());
-        int[] points = TallyPoints();
         winText.SetActive(true);
         players[0].actionable = false;
         players[1].actionable = false;
-        if (points[0] > points[1])
+        if (players[0].score > players[1].score)
         {
             winText.GetComponent<Text>().text = "PLAYER 1 WINS";
         }
-        else if (points[1] > points[0])
+        else if (players[1].score > players[0].score)
         {
             winText.GetComponent<Text>().text = "PLAYER 2 WINS";
         }
@@ -106,24 +119,5 @@ public class GameManager : MonoBehaviour {
         {
             winText.GetComponent<Text>().text = "TIE GAME";
         }
-    }
-
-    int[] TallyPoints()
-    {
-        int[] points = new int[2] { 0, 0 };
-
-        for (int i = 0; i < 2; i++)
-        {
-            List<Bank> bankList = players[i].activeBanks;
-            if (bankList.Count > 0)
-            {
-                foreach (Bank bank in bankList)
-                {
-                    points[i] += bank.coinsStored;
-                }
-            }
-        }
-
-        return points;
     }
 }
