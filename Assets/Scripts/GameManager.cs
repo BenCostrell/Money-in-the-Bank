@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour {
     public Color[] playerColors;
     public GameObject timer;
     public GameObject winText;
+    public GameObject winBackground;
     public GameObject[] scoreObjects;
     private Text timerText;
     private Text[] scoreText;
@@ -31,7 +32,7 @@ public class GameManager : MonoBehaviour {
 	void Start () {
         InitializePlayers();
         timeRemaining = timeLimit;
-        winText.SetActive(false);
+        winBackground.SetActive(false);
         gameOver = false;
 	}
 	
@@ -104,7 +105,7 @@ public class GameManager : MonoBehaviour {
     {
         gameOver = true;
         Services.EventManager.Fire(new GameOver());
-        winText.SetActive(true);
+        winBackground.SetActive(true);
         players[0].actionable = false;
         players[1].actionable = false;
         if (players[0].score > players[1].score)

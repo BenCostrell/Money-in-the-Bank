@@ -192,16 +192,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerNum: 0
-  accel: 400
+  accel: 500
   maxSpeed: 50
   coinPositionOffset: 5
   totalBanks: 3
+  activeBanks: []
   hammerPivot: {fileID: 0}
   hammerCollider: {fileID: 0}
   actionable: 0
   hammerSwingTime: 0.3
   hammerRecoveryTime: 0.2
   hammerActiveFrameStart: 0.2
+  score: 0
 --- !u!212 &212112212008802240
 SpriteRenderer:
   m_ObjectHideFlags: 1
